@@ -34,6 +34,41 @@ int verificaNumero(){
     return 0;
 }
 
+
+// ex2
+bool verificaMultiplo(int value)
+    {
+        if(value % 3 == 0) return 1;
+        return 0;
+    }
+
+string exibeTabuada(int value, int i){
+    int resultado = value * i;
+
+    if(verificaMultiplo(value)){
+        cout << value << " x " << i << " = " << resultado << endl;
+    }
+    i++;
+    if(i <= 10) exibeTabuada(value, i);
+
+
+    return "Fim";
+}
+
+int tabuadaSeMultiplo3()
+{
+    int value;
+    cout << "\nDigite um número inteiro: ";
+    cin >> value;
+
+    int i = 1;
+    exibeTabuada(value, i);
+
+
+    return 0;
+}
+
+
 int main()
 {
     int option = 0;
@@ -41,7 +76,7 @@ int main()
     {
         cout << "\n \n";
         cout << "1 - Verifica Numero" << endl;
-        cout << "2 - Hora atual" << endl;
+        cout << "2 - Tabuada se divisível por 3" << endl;
         cout << "0 - Sair" << endl;
         cout << "Escolha uma opção: ";
         cin >> option;
@@ -56,7 +91,8 @@ int main()
         break;
 
         case 2:
-            cout << "SISTEMA: 17:22";
+            tabuadaSeMultiplo3();
+            
             break;
         default:
             cout << "SISTEMA: Opção incorreta.";

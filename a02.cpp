@@ -12,14 +12,13 @@ string exibeTabuada(int value, int i){
     int resultado = value * i;
 
     if(verificaMultiplo(value)){
-        
+        cout << value << " x " << i << " = " << resultado << endl;
     }
-
-    cout << value << " x " << i << " = " << resultado << endl;
     i++;
+    if(i <= 10) exibeTabuada(value, i);
 
 
-    return "s";
+    return "Fim";
 }
 
 int main()
