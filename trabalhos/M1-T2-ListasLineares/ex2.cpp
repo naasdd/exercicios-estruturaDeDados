@@ -9,7 +9,6 @@ void inverter(int *vet, int tam)
     for(int i = 0; i < tam; i++){
         *(auxiliar + i) = *(vet + j);
         cout << "Auxiliar + " << i << ": " << *(auxiliar + i) << endl; 
-        // cout << "i = " << i << "   |   j = " << j << "\n\n";
         j--;
     }
 
