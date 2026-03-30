@@ -73,12 +73,13 @@ void inserirAberto(TabelaHash *tabela, Aluno alunoNovo) {
   int id = funcaoHash(alunoNovo.matricula);
   int i = 0;
   while (i < TAMANHO) {
-    int pos = (id + 1) % TAMANHO;
+    int pos = (id + i) % TAMANHO;
     if (tabela->dados[pos] == NULL) {
       No *novoNo = (No *)calloc(1, sizeof(No));
       novoNo->aluno = alunoNovo;
 
-      tabela->dados[id] = novoNo;
+      tabela->dados[pos] = novoNo;
+      return;
     }
     i++;
   }
@@ -94,7 +95,8 @@ void imprimirAberto(TabelaHash *tabela) {
     if (tabela->dados[i] == NULL) {
       cout << "Livre" << endl;
     } else {
-      cout << "Aluno: " << tabela->dados[i]->aluno.nome << " | Matricula: " << tabela->dados[i]->aluno.matricula << endl;
+      cout << "Aluno: " << tabela->dados[i]->aluno.nome
+           << " | Matricula: " << tabela->dados[i]->aluno.matricula << endl;
     }
   }
 }
@@ -129,16 +131,15 @@ int main() {
          << " | Nome: " << buscaNula->nome << endl;
   }
 
-
-  TabelaHash* tabelaAberto = (TabelaHash*) calloc(1, sizeof(TabelaHash));
+  TabelaHash *tabelaAberto = (TabelaHash *)calloc(1, sizeof(TabelaHash));
   Aluno jorge = {46, "jorge"};
   Aluno lucas = {38, "lucas"};
   Aluno maria = {49, "maria"};
-  
-  // V era pra ta imprimindo, mas nao ta 
-  inserirAberto(tabela, jorge); 
-  inserirAberto(tabela, lucas);
-  inserirAberto(tabela, maria);
 
+  inserirAberto(tabelaAberto, jorge);
+  inserirAberto(tabelaAberto, lucas);
+  inserirAberto(tabelaAberto, maria);
+
+  imprimirAberto(tabelaAberto);
   return 0;
 }
