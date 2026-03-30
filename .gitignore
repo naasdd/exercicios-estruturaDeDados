@@ -3,3 +3,6 @@
 *.out
 a.out
 *.zip
+
+**/build/
+**/.vscode/
