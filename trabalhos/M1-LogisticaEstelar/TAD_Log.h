@@ -5,16 +5,18 @@
 
 using namespace std;
 
-struct NoLog {
+struct NoLog
+{
     string mensagem;
-    NoLog* prox;
+    NoLog *prox;
 };
 
-struct Pilha {
-    NoLog* topo;
+struct Pilha
+{
+    NoLog *topo;
 };
 
-void push(Pilha* pilha, string mensagem);
-std::string pop(Pilha* pilha);
+void push(Pilha *pilha, string mensagem);
+std::string pop(Pilha *pilha);
 
 #endif

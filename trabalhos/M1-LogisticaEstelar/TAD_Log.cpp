@@ -3,19 +3,22 @@
 
 using namespace std;
 
-void push(Pilha* pilha, string mensagem) {
-    NoLog* novoLog = new NoLog();
+void push(Pilha *pilha, string mensagem)
+{
+    NoLog *novoLog = new NoLog();
     novoLog->mensagem = mensagem;
     novoLog->prox = pilha->topo;
     pilha->topo = novoLog;
 }
 
-string pop(Pilha* pilha) {
-    if(pilha->topo == NULL){
+string pop(Pilha *pilha)
+{
+    if (pilha->topo == NULL)
+    {
         return "";
     }
 
-    NoLog* temp = pilha->topo;
+    NoLog *temp = pilha->topo;
     string mensagem = temp->mensagem;
     pilha->topo = pilha->topo->prox;
     delete temp;

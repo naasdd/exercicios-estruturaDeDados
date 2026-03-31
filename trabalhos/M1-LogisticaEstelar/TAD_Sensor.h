@@ -5,17 +5,19 @@
 
 using namespace std;
 
-struct Sensor {
+struct Sensor
+{
     int id;
     float temperatura;
 };
 
-struct ListaSensores {
+struct ListaSensores
+{
     Sensor dados[5];
     int tamanho;
 };
 
-void inserirSensor(ListaSensores* lista, int id, float temperatura);
-void removerSensor(ListaSensores* lista, int id);
+void inserirSensor(ListaSensores *lista, int id, float temperatura);
+void removerSensor(ListaSensores *lista, int id);
 
 #endif

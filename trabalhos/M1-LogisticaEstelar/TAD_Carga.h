@@ -5,17 +5,19 @@
 
 using namespace std;
 
-struct NoCarga {
+struct NoCarga
+{
     string nome;
     float peso;
-    NoCarga* prox;
+    NoCarga *prox;
 };
 
-struct ListaCargas {
-    NoCarga* head;
+struct ListaCargas
+{
+    NoCarga *head;
 };
 
-void inserirCarga(ListaCargas* lista, string nome, float peso);
-void removerCarga(ListaCargas* lista, string nome);
+void inserirCarga(ListaCargas *lista, string nome, float peso);
+void removerCarga(ListaCargas *lista, string nome);
 
 #endif

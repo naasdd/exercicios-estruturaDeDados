@@ -5,18 +5,20 @@
 
 using namespace std;
 
-struct NoCamera {
+struct NoCamera
+{
     int id;
     string local;
-    NoCamera* prox;
+    NoCamera *prox;
 };
 
-struct ListaCameras {
-    NoCamera* head;
+struct ListaCameras
+{
+    NoCamera *head;
     int tamanho;
 };
 
-void inserirCamera(ListaCameras* lista, int id, string local);
-void removerCamera(ListaCameras* lista, int id);
+void inserirCamera(ListaCameras *lista, int id, string local);
+void removerCamera(ListaCameras *lista, string local);
 
 #endif

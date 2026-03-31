@@ -5,18 +5,20 @@
 
 using namespace std;
 
-struct NoNave {
+struct NoNave
+{
     string nome;
-    NoNave* ant;
-    NoNave* prox;
+    NoNave *ant;
+    NoNave *prox;
 };
 
-struct ListaNaves {
-    NoNave* head;
-    NoNave* tail;
+struct ListaNaves
+{
+    NoNave *head;
+    NoNave *tail;
 };
 
-void inserirNave(ListaNaves* lista, string nome);
-void removerNave(ListaNaves* lista, string nome);
+void inserirNave(ListaNaves *lista, string nome);
+void removerNave(ListaNaves *lista, string nome);
 
 #endif

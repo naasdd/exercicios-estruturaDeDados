@@ -5,17 +5,19 @@
 
 using namespace std;
 
-struct NoNaveHangar {
+struct NoNaveHangar
+{
     string nome;
-    NoNaveHangar* prox;
+    NoNaveHangar *prox;
 };
 
-struct Fila {
-    NoNaveHangar* frente;
-    NoNaveHangar* fim;
+struct Fila
+{
+    NoNaveHangar *frente;
+    NoNaveHangar *fim;
 };
 
-void enqueue(Fila* fila, string nome);
-string dequeue(Fila* fila);
+void enqueue(Fila *fila, string nome);
+string dequeue(Fila *fila);
 
 #endif
