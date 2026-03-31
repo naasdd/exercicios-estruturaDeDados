@@ -15,7 +15,7 @@ struct ListaCargas {
     NoCarga* head;
 };
 
-void inserirCarga(ListaCargas& lista, string nome, float peso);
-void removerCarga(ListaCargas& lista, string nome);
+void inserirCarga(ListaCargas* lista, string nome, float peso);
+void removerCarga(ListaCargas* lista, string nome);
 
 #endif

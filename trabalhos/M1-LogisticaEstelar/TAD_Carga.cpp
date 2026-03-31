@@ -3,10 +3,10 @@
 
 using namespace std;
 
-void inserirCarga(ListaCargas& lista, string nome, float peso) {
+void inserirCarga(ListaCargas* lista, string nome, float peso) {
     // TODO
 }
 
-void removerCarga(ListaCargas& lista, string nome) {
+void removerCarga(ListaCargas* lista, string nome) {
     // TODO
 }

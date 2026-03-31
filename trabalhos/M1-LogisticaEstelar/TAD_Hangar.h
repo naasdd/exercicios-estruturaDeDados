@@ -15,7 +15,7 @@ struct Fila {
     NoNaveHangar* fim;
 };
 
-void enqueue(Fila& fila, string nome);
-string dequeue(Fila& fila);
+void enqueue(Fila* fila, string nome);
+string dequeue(Fila* fila);
 
 #endif

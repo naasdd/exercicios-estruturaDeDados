@@ -38,6 +38,10 @@ int telaAtual = 0; // 0 a 5
 string inputTexto = "";
 string ultimaMensagem = "Bem-vindo à Estação Estelar";
 
+// Variáveis para a UI do Pop (Logs)
+string logRemovidoMsg = "";
+float timerPop = 0.0f;
+
 // Funções utilitárias
 int safeStoi(const string& str, int defVal = 0) {
     try {
@@ -103,13 +107,13 @@ void DesenharModuloSensores() {
     
     if (DrawButton({ 350, 450, 150, 50 }, "Inserir", GREEN)) {
         int id = inputTexto.length() > 0 ? safeStoi(inputTexto, GetRandomValue(1, 100)) : GetRandomValue(1, 100);
-        inserirSensor(listaSensores, id, 25.5f);
+        inserirSensor(&listaSensores, id, 25.5f);
         ultimaMensagem = "Tentativa de inserir Sensor (id: " + to_string(id) + ")";
         inputTexto = "";
     }
     if (DrawButton({ 550, 450, 150, 50 }, "Remover", RED)) {
         int id = inputTexto.length() > 0 ? safeStoi(inputTexto, 0) : 0;
-        removerSensor(listaSensores, id);
+        removerSensor(&listaSensores, id);
         ultimaMensagem = "Tentativa de remover Sensor (id: " + to_string(id) + ")";
         inputTexto = "";
     }
@@ -138,13 +142,13 @@ void DesenharModuloCargas() {
     
     if (DrawButton({ 350, 450, 150, 50 }, "Inserir", GREEN)) {
         string nome = inputTexto.empty() ? "CargaX" : inputTexto;
-        inserirCarga(listaCargas, nome, 10.0f);
+        inserirCarga(&listaCargas, nome, 10.0f);
         ultimaMensagem = "Tentativa de inserir Carga: " + nome;
         inputTexto = "";
     }
     if (DrawButton({ 550, 450, 150, 50 }, "Remover", RED)) {
         string nome = inputTexto;
-        removerCarga(listaCargas, nome);
+        removerCarga(&listaCargas, nome);
         ultimaMensagem = "Tentativa de remover Carga: " + nome;
         inputTexto = "";
     }
@@ -177,13 +181,13 @@ void DesenharModuloNaves() {
 
     if (DrawButton({ 350, 450, 150, 50 }, "Inserir", GREEN)) {
         string nome = inputTexto.empty() ? "NaveX" : inputTexto;
-        inserirNave(listaNaves, nome);
+        inserirNave(&listaNaves, nome);
         ultimaMensagem = "Tentativa de inserir Nave: " + nome;
         inputTexto = "";
     }
     if (DrawButton({ 550, 450, 150, 50 }, "Remover", RED)) {
         string nome = inputTexto;
-        removerNave(listaNaves, nome);
+        removerNave(&listaNaves, nome);
         ultimaMensagem = "Tentativa de remover Nave: " + nome;
         inputTexto = "";
     }
@@ -192,33 +196,97 @@ void DesenharModuloNaves() {
 void DesenharModuloCameras() {
     DrawText("Módulo 4: Câmeras (Lista Circular)", 400, 150, 30, DARKGRAY);
     
+    // Circuito base do anel de pontenciômetro / lista
+    DrawCircleLines(640, 330, 150, Fade(LIGHTGRAY, 0.8f));
+    DrawCircleLines(640, 330, 152, Fade(LIGHTGRAY, 0.4f));
+    
     NoCamera* atual = listaCameras.head;
     if (atual != nullptr) {
-        int i = 0;
         int qtde = listaCameras.tamanho > 0 ? listaCameras.tamanho : 1; 
+
+        // Passada 1: Círculo central com setas de ligação (evidenciando a lista circular estritamente correta)
+        NoCamera* traco = listaCameras.head;
+        int j = 0;
         do {
-            float angulo = (i * 2.0f * PI) / qtde;
-            Vector2 pos = { (float)(640 + 200 * cos(angulo)), (float)(300 + 100 * sin(angulo)) };
-            DrawCircleV(pos, 40, PURPLE);
-            DrawCircleLines(pos.x, pos.y, 40, BLACK);
-            DrawText(TextFormat("ID:%d", atual->id), pos.x - 25, pos.y - 10, 20, WHITE);
+            float anguloAtual = (j * 2.0f * PI) / qtde - PI / 2.0f;
+            float anguloProx = ((j + 1) * 2.0f * PI) / qtde - PI / 2.0f;
+            
+            // Posição média exata para desenhar a flecha no fio entre dois nodos
+            float anguloSeta = (anguloAtual + anguloProx) / 2.0f;
+            Vector2 posSeta = { (float)(640 + 150 * cos(anguloSeta)), (float)(330 + 150 * sin(anguloSeta)) };
+            
+            // Direção da tangente no fio (para calcular perfeitamente o formato da seta)
+            Vector2 dir = { -(float)sin(anguloSeta), (float)cos(anguloSeta) }; 
+            Vector2 ortho = { (float)cos(anguloSeta), (float)sin(anguloSeta) };
+            
+            // Desenha a setinha na direção exata do fluxo da lista circular visualmente
+            Vector2 p1 = { posSeta.x + dir.x * 8, posSeta.y + dir.y * 8 };
+            Vector2 p2 = { posSeta.x - dir.x * 6 - ortho.x * 6, posSeta.y - dir.y * 6 - ortho.y * 6 };
+            Vector2 p3 = { posSeta.x - dir.x * 6 + ortho.x * 6, posSeta.y - dir.y * 6 + ortho.y * 6 };
+            DrawTriangle(p1, p2, p3, ORANGE);
+            
+            traco = traco->prox;
+            j++;
+        } while(traco != listaCameras.head && traco != nullptr && j < 15);
+
+        // Passada 2: Desenha os "cards" das câmeras (nodes minimalistas e clean)
+        int i = 0;
+        do {
+            float angulo = (i * 2.0f * PI) / qtde - PI / 2.0f;
+            Vector2 pos = { (float)(640 + 150 * cos(angulo)), (float)(330 + 150 * sin(angulo)) };
+            
+            // Design mais clean, estilo "box card" arredondado com espaço pro Local
+            Rectangle box = { pos.x - 35, pos.y - 22, 70, 44 };
+            DrawRectangleRounded(box, 0.4f, 10, DARKBLUE);
+            DrawRectangleRoundedLines(box, 0.4f, 10, Fade(SKYBLUE, 0.8f));
+            
+            // Lente embutida miniatura no card
+            DrawCircle((int)pos.x - 18, (int)pos.y - 6, 8, BLACK);
+            DrawCircle((int)pos.x - 18, (int)pos.y - 6, 4, LIME);
+            
+            // Textos: ID na parte de cima, Local na parte de baixo
+            DrawText(TextFormat("ID:%d", atual->id), (int)pos.x - 2, (int)pos.y - 12, 12, WHITE);
+            
+            // Centraliza bonitinho a string do local
+            string locStr = atual->local;
+            if(locStr.length() > 8) locStr = locStr.substr(0, 6) + "..";
+            int lWidth = MeasureText(locStr.c_str(), 10);
+            DrawText(locStr.c_str(), (int)pos.x - lWidth/2, (int)pos.y + 7, 10, Fade(LIGHTGRAY, 0.9f));
+            
             atual = atual->prox;
             i++;
         } while(atual != listaCameras.head && atual != nullptr && i < 15);
     } else {
-        DrawText("Lista Vazia", 550, 300, 20, GRAY);
+        DrawText("NENHUMA CÂMERA INSTALADA (LISTA VAZIA)", 420, 330, 20, GRAY);
     }
 
-    if (DrawButton({ 350, 480, 150, 50 }, "Inserir", GREEN)) {
-        int id = inputTexto.length() > 0 ? safeStoi(inputTexto, GetRandomValue(1, 100)) : GetRandomValue(1, 100);
-        inserirCamera(listaCameras, id, "Setor A");
-        ultimaMensagem = "Tentativa de inserir Câmera (id: " + to_string(id) + ")";
+    if (DrawButton({ 350, 520, 150, 50 }, "Inserir", GREEN)) {
+        // ID gerado aleatoriamente para o novo hardware
+        int id = GetRandomValue(1, 100);
+        
+        // A localidade (local) resgata exato o que foi digitado (senão vira um fallback)
+        string loc = inputTexto.empty() ? "Setor " + to_string(GetRandomValue(1, 9)) : inputTexto;
+        
+        inserirCamera(&listaCameras, id, loc);
+        ultimaMensagem = "Tentativa de inserir Câmera (id: " + to_string(id) + " | " + loc + ")";
         inputTexto = "";
     }
-    if (DrawButton({ 550, 480, 150, 50 }, "Remover", RED)) {
-        int id = inputTexto.length() > 0 ? safeStoi(inputTexto, 0) : 0;
-        removerCamera(listaCameras, id);
-        ultimaMensagem = "Tentativa de remover Câmera (id: " + to_string(id) + ")";
+    if (DrawButton({ 550, 520, 150, 50 }, "Remover", RED)) {
+        int id = 0;
+        if (inputTexto.length() > 0) {
+            id = safeStoi(inputTexto, 0);
+        } else if (listaCameras.head != nullptr) {
+            // Se o usuário clicar em "Remover" sem digitar nada, removemos o head (facilita o teste)
+            id = listaCameras.head->id;
+        }
+
+        if (id > 0) {
+            removerCamera(&listaCameras, id);
+            ultimaMensagem = "Tentativa de remover Câmera (id: " + to_string(id) + ")";
+        } else {
+            ultimaMensagem = "Lista já está vazia ou ID inválido.";
+        }
+        
         inputTexto = "";
     }
 }
@@ -241,14 +309,36 @@ void DesenharModuloLogs() {
 
     if (DrawButton({ 350, 450, 150, 50 }, "Push", GREEN)) {
         string msg = inputTexto.empty() ? "Log Event" : inputTexto;
-        push(pilhaLogs, msg);
+        push(&pilhaLogs, msg);
         ultimaMensagem = "Tentativa de fazer Push: " + msg;
         inputTexto = "";
     }
     if (DrawButton({ 550, 450, 150, 50 }, "Pop", RED)) {
-        string res = pop(pilhaLogs);
+        string res = pop(&pilhaLogs);
+        if (res != "") {
+            logRemovidoMsg = res;
+            timerPop = 2.5f; // Mostra por 2.5 segundos
+        }
         ultimaMensagem = "Tentativa de Pop. Retornou: " + res;
         inputTexto = "";
+    }
+
+    // Efeito visual bonitinho para o Pop do Log
+    if (timerPop > 0.0f) {
+        timerPop -= GetFrameTime();
+        
+        // Efeito de fade-out no último segundo
+        float alpha = (timerPop < 1.0f) ? timerPop : 1.0f;
+        
+        Rectangle popCard = { 460, 240, 360, 100 };
+        // Fundo arredondado com sombra simples
+        DrawRectangleRounded({465, 245, 360, 100}, 0.2f, 10, Fade(GRAY, alpha * 0.5f)); 
+        DrawRectangleRounded(popCard, 0.2f, 10, Fade(SKYBLUE, alpha));
+        DrawRectangleRoundedLines(popCard, 0.2f, 10, Fade(DARKBLUE, alpha));
+        
+        DrawText("LOG REMOVIDO:", 480, 255, 20, Fade(DARKBLUE, alpha));
+        // Ajusta a exibição da string caso seja muito grande
+        DrawText(logRemovidoMsg.c_str(), 480, 290, 25, Fade(BLACK, alpha));
     }
 }
 
@@ -270,12 +360,12 @@ void DesenharModuloHangar() {
 
     if (DrawButton({ 350, 450, 150, 50 }, "Enqueue", GREEN)) {
         string nome = inputTexto.empty() ? "NaveH" : inputTexto;
-        enqueue(filaHangar, nome);
+        enqueue(&filaHangar, nome);
         ultimaMensagem = "Tentativa de Enqueue: " + nome;
         inputTexto = "";
     }
     if (DrawButton({ 550, 450, 150, 50 }, "Dequeue", RED)) {
-        string res = dequeue(filaHangar);
+        string res = dequeue(&filaHangar);
         ultimaMensagem = "Tentativa de Dequeue. Retornou: " + res;
         inputTexto = "";
     }

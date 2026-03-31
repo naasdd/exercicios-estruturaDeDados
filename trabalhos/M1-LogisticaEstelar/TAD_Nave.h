@@ -16,7 +16,7 @@ struct ListaNaves {
     NoNave* tail;
 };
 
-void inserirNave(ListaNaves& lista, string nome);
-void removerNave(ListaNaves& lista, string nome);
+void inserirNave(ListaNaves* lista, string nome);
+void removerNave(ListaNaves* lista, string nome);
 
 #endif

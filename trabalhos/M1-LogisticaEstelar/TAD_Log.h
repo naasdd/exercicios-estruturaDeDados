@@ -14,7 +14,7 @@ struct Pilha {
     NoLog* topo;
 };
 
-void push(Pilha& pilha, string mensagem);
-std::string pop(Pilha& pilha);
+void push(Pilha* pilha, string mensagem);
+std::string pop(Pilha* pilha);
 
 #endif

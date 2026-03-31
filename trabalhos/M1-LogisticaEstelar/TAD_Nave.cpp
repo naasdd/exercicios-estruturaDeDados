@@ -3,10 +3,10 @@
 
 using namespace std;
 
-void inserirNave(ListaNaves& lista, string nome) {
+void inserirNave(ListaNaves* lista, string nome) {
     // TODO
 }
 
-void removerNave(ListaNaves& lista, string nome) {
+void removerNave(ListaNaves* lista, string nome) {
     // TODO
 }

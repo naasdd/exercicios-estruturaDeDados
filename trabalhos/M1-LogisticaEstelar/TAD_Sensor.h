@@ -15,7 +15,7 @@ struct ListaSensores {
     int tamanho;
 };
 
-void inserirSensor(ListaSensores& lista, int id, float temperatura);
-void removerSensor(ListaSensores& lista, int id);
+void inserirSensor(ListaSensores* lista, int id, float temperatura);
+void removerSensor(ListaSensores* lista, int id);
 
 #endif

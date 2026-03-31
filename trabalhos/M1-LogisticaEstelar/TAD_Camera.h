@@ -16,7 +16,7 @@ struct ListaCameras {
     int tamanho;
 };
 
-void inserirCamera(ListaCameras& lista, int id, string local);
-void removerCamera(ListaCameras& lista, int id);
+void inserirCamera(ListaCameras* lista, int id, string local);
+void removerCamera(ListaCameras* lista, int id);
 
 #endif
