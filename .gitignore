@@ -5,4 +5,4 @@ a.out
 *.zip
 
 **/build/
-**/.vscode/
+**/.vscode/**/.DS_Store
