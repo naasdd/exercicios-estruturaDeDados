@@ -1,86 +1,83 @@
 #include <iostream>
 #include <cstdlib>
-#include <cstring>
 #include <ctime>
+#include <algorithm>
 
 using namespace std;
 
-#define TAM_HASH 100003
-
-int comparar(const void *a, const void *b) {
-    return *(int *)a - *(int *)b;
-}
-
-bool algoritmo_a(int *vetor, int n) {
-    for (int i = 0; i < n - 1; i++)
-        for (int j = i + 1; j < n; j++)
-            if (vetor[i] == vetor[j]) return true;
-    return false;
-}
-
-bool algoritmo_b(int *vetor, int n) {
-    int *copia = new int[n];
-    memcpy(copia, vetor, n * sizeof(int));
-    qsort(copia, n, sizeof(int), comparar);
-    for (int i = 0; i < n - 1; i++) {
-        if (copia[i] == copia[i + 1]) {
-            delete[] copia;
-            return true;
-        }
-    }
-    delete[] copia;
-    return false;
-}
-
-bool algoritmo_c(int *vetor, int n) {
-    int *tabela = new int[TAM_HASH]();
+// Algoritmo A: Força Bruta (Dois laços aninhados)
+bool temDuplicadoA(int vetor[], int n) {
     for (int i = 0; i < n; i++) {
-        int h = abs(vetor[i]) % TAM_HASH;
-        while (tabela[h] != 0) {
-            if (tabela[h] == vetor[i] + 1) {
-                delete[] tabela;
-                return true;
-            }
-            h = (h + 1) % TAM_HASH;
+        for (int j = i + 1; j < n; j++) {
+            if (vetor[i] == vetor[j]) return true;
         }
-        tabela[h] = vetor[i] + 1;
     }
-    delete[] tabela;
     return false;
 }
 
-double medir(bool (*func)(int *, int), int *vetor, int n) {
-    clock_t inicio = clock();
-    func(vetor, n);
-    return (double)(clock() - inicio) / CLOCKS_PER_SEC * 1000.0;
+// Comparador para o qsort
+int comparar(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+// Algoritmo B: Ordenação + Varredura Linear
+bool temDuplicadoB(int vetor[], int n) {
+    qsort(vetor, n, sizeof(int), comparar);
+    for (int i = 0; i < n - 1; i++) {
+        if (vetor[i] == vetor[i + 1]) return true;
+    }
+    return false;
+}
+
+// Algoritmo C: Otimizado (Tabela Hash simples)
+bool temDuplicadoC(int vetor[], int n) {
+    int maxVal = 0;
+    for(int i = 0; i < n; i++) if(vetor[i] > maxVal) maxVal = vetor[i];
+
+    bool* controle = (bool*)calloc(maxVal + 1, sizeof(bool));
+    bool duplicado = false;
+    for (int i = 0; i < n; i++) {
+        if (controle[vetor[i]]) {
+            duplicado = true;
+            break;
+        }
+        controle[vetor[i]] = true;
+    }
+    free(controle);
+    return duplicado;
+}
+
+void rodarTeste(int n) {
+    int* v = (int*)malloc(n * sizeof(int));
+    for (int i = 0; i < n; i++) v[i] = rand();
+
+    clock_t t;
+
+    // Teste A
+    t = clock();
+    temDuplicadoA(v, n);
+    double tempoA = (double)(clock() - t) / CLOCKS_PER_SEC;
+
+    // Teste B
+    t = clock();
+    temDuplicadoB(v, n);
+    double tempoB = (double)(clock() - t) / CLOCKS_PER_SEC;
+
+    // Teste C
+    t = clock();
+    temDuplicadoC(v, n);
+    double tempoC = (double)(clock() - t) / CLOCKS_PER_SEC;
+
+    cout << "N=" << n << " | A: " << tempoA << "s | B: " << tempoB << "s | C: " << tempoC << "s" << endl;
+
+    free(v);
 }
 
 int main() {
-    srand(42);
-    int tamanhos[] = {5000, 20000, 50000};
-
-    cout << "N          A (ms)     B (ms)     C (ms)" << endl;
-
-    for (int t = 0; t < 3; t++) {
-        int n = tamanhos[t];
-
-        int *vetor = new int[n];
-        for (int i = 0; i < n; i++) vetor[i] = i;
-
-        for (int i = n - 1; i > 0; i--) {
-            int j = rand() % (i + 1);
-            int tmp = vetor[i];
-            vetor[i] = vetor[j];
-            vetor[j] = tmp;
-        }
-
-        cout << n << "       "
-             << medir(algoritmo_a, vetor, n) << "       "
-             << medir(algoritmo_b, vetor, n) << "       "
-             << medir(algoritmo_c, vetor, n) << endl;
-
-        delete[] vetor;
-    }
-
+    srand(time(NULL));
+    cout << "Iniciando testes de complexidade..." << endl;
+    rodarTeste(5000);
+    rodarTeste(20000);
+    rodarTeste(50000);
     return 0;
 }
