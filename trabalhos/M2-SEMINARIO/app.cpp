@@ -1,14 +1,16 @@
 #include <iostream>
 using namespace std;
 
-struct No {
+struct No
+{
     int *chaves;
     No **filhos;
     int numChaves;
     int folha;
 };
 
-struct ArvoreB {
+struct ArvoreB
+{
     No *raiz;
     int M;
 };
@@ -17,7 +19,7 @@ No *criarNo(int M, int ehFolha)
 {
     No *no = new No;
     no->chaves = new int[M - 1];
-    no->filhos = new No*[M];
+    no->filhos = new No *[M];
     no->numChaves = 0;
     no->folha = ehFolha;
     for (int i = 0; i < M; i++)
@@ -66,6 +68,7 @@ void rotacionarDireita(No *no, int i)
 
     for (int j = filho->numChaves - 1; j >= 0; j--)
         filho->chaves[j + 1] = filho->chaves[j];
+
     if (!filho->folha)
     {
         for (int j = filho->numChaves; j >= 0; j--)
@@ -73,6 +76,7 @@ void rotacionarDireita(No *no, int i)
     }
 
     filho->chaves[0] = no->chaves[i - 1];
+    
     if (!filho->folha)
         filho->filhos[0] = irmaoEsq->filhos[irmaoEsq->numChaves];
 
